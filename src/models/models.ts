@@ -11,7 +11,7 @@ export interface ApiDef {
   prefix: string;
 }
 
-export interface SFConfig {
+export interface ServerlessFastifyConfig {
   isServerless: boolean;
   port?: number;
   apis: ApiDef[];

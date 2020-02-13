@@ -1,25 +1,25 @@
 import * as fastify from "fastify";
 import * as fp from "fastify-plugin";
-import { SFConfig, Api } from "../models/models";
+import { ServerlessFastifyConfig, Api } from "../models/models";
 
-const initApp = (sfConfig: SFConfig): fastify.FastifyInstance => {
+const initApp = (config: ServerlessFastifyConfig): fastify.FastifyInstance => {
   let app: fastify.FastifyInstance = fastify({});
 
   // Register the plugins ( pre handler, global error, etc..)
-  for (let plugin of sfConfig.plugins) {
+  for (let plugin of config.plugins) {
     app.register(fp(plugin));
   }
 
   return app;
 };
 
-const loadApps = (sfConfig: SFConfig): Api[] => {
+const loadApps = (config: ServerlessFastifyConfig): Api[] => {
   const apps: Api[] = [];
 
-  if (sfConfig.isServerless) {
+  if (config.isServerless) {
     // Register the apis ( controllers ) in different apps
-    for (let api of sfConfig.apis) {
-      const app = initApp(sfConfig);
+    for (let api of config.apis) {
+      const app = initApp(config);
       app.register(api.controller, { prefix: api.prefix });
       apps.push({
         name: api.name,
@@ -28,8 +28,8 @@ const loadApps = (sfConfig: SFConfig): Api[] => {
     }
   } else {
     // Register the controllers in one app ( for standalone server )
-    const app = initApp(sfConfig);
-    for (let api of sfConfig.apis) {
+    const app = initApp(config);
+    for (let api of config.apis) {
       app.register(api.controller, { prefix: api.prefix });
       console.log(`loaded: ${api.name} => ${api.prefix}`);
     }
