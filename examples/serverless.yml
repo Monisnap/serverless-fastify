@@ -1,0 +1,19 @@
+service: sls-fastify
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-1
+  stackName: ${self:service}-${self:provider.stage}
+  apiName: ${self:service}-${self:provider.stage}
+  timeout: 29
+  environment:
+    IS_SERVERLESS: true
+
+functions:
+  users:
+    handler: src/app.users
+    events:
+      - http: "ANY /v1/users"
+      - http: "ANY /v1/users/{proxy+}"

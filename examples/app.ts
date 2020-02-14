@@ -1,6 +1,17 @@
-import { UserController } from "./user.controller";
-import { SlsFastifyConfig } from "../src/interfaces";
+import { SlsFastifyConfig, SlsFastifyController } from "../src/interfaces";
 import { bootstrapApp } from "../src/app/bootstrap-app";
+import { FastifyInstance, FastifyReply } from "fastify";
+
+// Define controller using the interface
+class UsersController implements SlsFastifyController {
+  endpoints(fastify: FastifyInstance, opts, done) {
+    fastify.get("/", async (request, reply: FastifyReply<any>) => {
+      reply.send("Hello world");
+    });
+
+    done();
+  }
+}
 
 const preHandlerHook = (fastify, options, done) => {
   fastify.addHook("preHandler", (request, reply, done) => {
@@ -17,7 +28,7 @@ const config = {
   routes: [
     {
       name: "users",
-      controller: new UserController(),
+      controller: new UsersController(),
       prefix: "v1/users"
     }
   ],
