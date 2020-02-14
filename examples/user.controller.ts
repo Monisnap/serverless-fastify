@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyInstance } from "fastify";
-import { SlsFastifyController } from "../interfaces";
+import { SlsFastifyController } from "../src/interfaces";
 
 export class UserController implements SlsFastifyController {
   endpoints(fastify: FastifyInstance, opts, done) {

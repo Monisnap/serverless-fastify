@@ -1,6 +1,6 @@
-import { SlsFastifyConfig } from "..";
 import { UserController } from "./user.controller";
-import { bootstrapApp } from "../app/bootstrap-app";
+import { SlsFastifyConfig } from "../src/interfaces";
+import { bootstrapApp } from "../src/app/bootstrap-app";
 
 const preHandlerHook = (fastify, options, done) => {
   fastify.addHook("preHandler", (request, reply, done) => {
