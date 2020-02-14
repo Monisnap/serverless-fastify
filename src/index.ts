@@ -1,2 +1,2 @@
-export { startSF } from "./app/start-sf";
-export * from "./models/models";
+export { bootstrapApp } from "./app/bootstrap-app";
+export * from "./interfaces";

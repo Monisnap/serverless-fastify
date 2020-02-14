@@ -1,7 +1,7 @@
 import * as awsLambdaFastify from "aws-lambda-fastify";
-import { Api } from "../models/models";
+import { AppHandlerConfig } from "../interfaces";
 
-const initHandlers = (apps: Api[], beforeStart: (() => Promise<void>) | undefined) => {
+const initHandlers = (apps: AppHandlerConfig[], beforeStart: (() => Promise<void>) | undefined) => {
   const handlers: ((event: any, context: any) => Promise<any>)[] = [];
   for (let app of apps) {
     if (app.name) {
@@ -9,6 +9,7 @@ const initHandlers = (apps: Api[], beforeStart: (() => Promise<void>) | undefine
         if (beforeStart) {
           await beforeStart();
         }
+        
         return awsLambdaFastify(app.instance)(event, context);
       };
     }
