@@ -17,9 +17,9 @@ npm i serverless-fastify --save
 app.ts
 
 ```js
-import { UserController } from "./user.controller";
-import { SlsFastifyConfig } from "../src/interfaces";
+import { SlsFastifyConfig, SlsFastifyController } from "../src/interfaces";
 import { bootstrapApp } from "../src/app/bootstrap-app";
+import { FastifyInstance, FastifyReply } from "fastify";
 
 // Define the controller using the interface
 class UserController implements SlsFastifyController {
