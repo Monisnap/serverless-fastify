@@ -16,7 +16,7 @@ npm i serverless-fastify --save
 
 app.ts
 
-```js
+```ts
 import { SlsFastifyConfig, SlsFastifyController } from "../src/interfaces";
 import { bootstrapApp } from "../src/app/bootstrap-app";
 import { FastifyInstance, FastifyReply } from "fastify";
@@ -52,7 +52,7 @@ const config = {
   routes: [
     {
       name: "users", // This is the name of the handler in serverless.yml
-      controller: new UserController(), // the actual controller for this route
+      controller: UserController, // the actual controller for this route
       prefix: "v1/users" // The prefix defined for api gateway
     }
   ],

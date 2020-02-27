@@ -33,7 +33,7 @@ const config = {
   routes: [
     {
       name: "users", // This is the name of the handler in serverless.yml
-      controller: new UserController(), // the actual controller for this route
+      controller: UserController, // the actual controller for this route
       prefix: "v1/users" // The prefix defined for api gateway
     }
   ],

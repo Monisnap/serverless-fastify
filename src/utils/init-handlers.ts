@@ -1,18 +1,25 @@
 import * as awsLambdaFastify from "aws-lambda-fastify";
-import { AppHandlerConfig } from "../interfaces";
+import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
+import * as fp from "fastify-plugin";
+import fastify = require("fastify");
+import { getFromContainer } from "..";
+import { initApp, registerController } from "./setup-app";
 
-const initHandlers = (apps: AppHandlerConfig[], beforeStart: (() => Promise<void>) | undefined) => {
+const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void>) | undefined) => {
   const handlers: ((event: any, context: any) => Promise<any>)[] = [];
-  for (let app of apps) {
-    if (app.name) {
-      handlers[app.name] = async (event, context) => {
-        if (beforeStart) {
-          await beforeStart();
-        }
-        
-        return awsLambdaFastify(app.instance)(event, context);
-      };
-    }
+  for (let api of config.routes) {
+    handlers[api.name] = async (event, context) => {
+      if (beforeStart) {
+        await beforeStart();
+      }
+
+      // init the base app for each handler
+      let app = initApp(config);
+      // Register the controller
+      registerController(app, api);
+
+      return awsLambdaFastify(app)(event, context);
+    };
   }
 
   return handlers;

@@ -1,8 +1,5 @@
-import { FastifyInstance } from "fastify";
-import { SlsFastifyController } from ".";
-
 export interface RouteDefinition {
-    name: string;
-    controller: SlsFastifyController;
-    prefix: string;
-  }
+  name: string;
+  controller: any;
+  prefix: string;
+}

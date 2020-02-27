@@ -1,21 +1,30 @@
 import { initHandlers } from "../utils/init-handlers";
-import { SlsFastifyConfig, AppHandlerConfig } from "../interfaces";
-import { loadApps } from "../utils/init-app";
+import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
+import fastify = require("fastify");
+import * as fp from "fastify-plugin";
+import { getFromContainer } from "../utils/container";
+import { initApp, registerController } from "../utils/setup-app";
 
 export const bootstrapApp = (config: SlsFastifyConfig, beforeStart?: () => Promise<void>) => {
-  const apps = loadApps(config);
-
   if (config.isServerless) {
-    return initHandlers(apps, beforeStart);
+    return initHandlers(config, beforeStart);
   } else {
     return (async () => {
-      const instance = apps[0].instance;
       if (beforeStart) {
         await beforeStart();
       }
+
+      // init the base app
+      let app = initApp(config);
+
+      // Register the controllers
+      for (let api of config.routes) {
+        registerController(app, api);
+      }
+
       const PORT = config.port || 3000;
       const HOST = config.host || "127.0.0.1";
-      instance.listen(PORT, HOST, async err => {
+      app.listen(PORT, HOST, async err => {
         if (err) console.error(err);
         console.log(`server listening on port ${PORT}`);
       });
