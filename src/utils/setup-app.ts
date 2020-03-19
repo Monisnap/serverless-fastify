@@ -1,7 +1,8 @@
 import fastify = require("fastify");
 import { SlsFastifyConfig, SlsFastifyController, RouteDefinition } from "../interfaces";
 import * as fp from "fastify-plugin";
-import { getFromContainer } from "..";
+import { getFromContainer, methodMetadataKey } from "..";
+import { DecoratorMetadata } from "../interfaces/decorator-metadata.interface";
 
 const initApp = (config: SlsFastifyConfig) => {
   //Create instance here
@@ -17,9 +18,29 @@ const initApp = (config: SlsFastifyConfig) => {
 
 const registerController = (app: fastify.FastifyInstance, api: RouteDefinition) => {
   // Register the controller
-  let controller = getFromContainer<SlsFastifyController>(api.controller);
-  app.register(controller.endpoints.bind(controller), { prefix: api.prefix });
-  console.log(`loaded: ${api.name} => ${api.prefix}`);
+  let controller = getFromContainer(api.controller) as any;
+
+  app.register(
+    (fastify: fastify.FastifyInstance, opts, done) => {
+      for (let method in controller) {
+        // Get the decorator data from the key
+        let decoratorData = Reflect.getMetadata(methodMetadataKey, controller, method) as DecoratorMetadata;
+        // If the decorator is not null, it means the method has been decorated
+        if (decoratorData) {
+          // Set up the route and handler with the decorator data
+          fastify[decoratorData.method](
+            decoratorData.path,
+            decoratorData.config ?? {},
+            (request: fastify.FastifyRequest, reply: fastify.FastifyReply<any>) => {
+              reply.send(controller[method](request, reply))
+            }
+          );
+        }
+      }
+      done();
+    },
+    { prefix: api.prefix }
+  );
 };
 
 export { initApp, registerController };

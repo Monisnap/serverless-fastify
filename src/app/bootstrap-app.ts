@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { initHandlers } from "../utils/init-handlers";
 import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
 import fastify = require("fastify");
@@ -20,6 +21,7 @@ export const bootstrapApp = (config: SlsFastifyConfig, beforeStart?: () => Promi
       // Register the controllers
       for (let api of config.routes) {
         registerController(app, api);
+        console.log(`loaded: ${api.name} => ${api.prefix}`);
       }
 
       const PORT = config.port || 3000;

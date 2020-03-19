@@ -1,3 +1,4 @@
-export { bootstrapApp } from "./app/bootstrap-app";
+export * from "./app/bootstrap-app";
 export * from "./interfaces";
-export * from "./utils/container"
+export * from "./utils/container";
+export * from "./decorators";

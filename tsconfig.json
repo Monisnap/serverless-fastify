@@ -3,6 +3,8 @@
     "declaration": true,
     "preserveConstEnums": true,
     "strictNullChecks": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "target": "es5",
     "outDir": "dist",
     "module": "commonjs",
