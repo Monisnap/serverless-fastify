@@ -2,7 +2,11 @@
 
 Simple wrapper around [Fastify](https://www.fastify.io/) to use it with [Serverless](https://serverless.com/)
 
-Disclaimer: very EARLY draft of the package
+Disclaimer: very EARLY draft of the package, thus I may introduce breaking changes between versions
+
+## Prerequisites
+- TypeScript
+- Fastify
 
 ## Install
 
@@ -17,22 +21,31 @@ npm i serverless-fastify --save
 app.ts
 
 ```ts
-import { SlsFastifyConfig, SlsFastifyController } from "serverless-fastify";
-import { bootstrapApp } from "serverless-fastify";
+import { bootstrapApp, SlsFastifyConfig, Get } from "serverless-fastify";
 import { FastifyInstance, FastifyReply } from "fastify";
 
 // Define the controller using the interface
-class UserController implements SlsFastifyController {
-  endpoints(fastify: FastifyInstance, opts, done) {
-    fastify.get("/", async (request, reply: FastifyReply<any>) => {
-      reply.send("Hello world");
-    });
-
-    done();
+class HelloWorldController {
+  @Get("/", {
+    schema: {
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            msg: { type: "string" }
+          }
+        }
+      }
+    }
+  })
+  getMessage(request: FastifyRequest, reply: FastifyReply<any>) {
+    return {
+      msg: "Hello world"
+    };
   }
 }
 
-// Pre handler hook plugin example
+// Pre handler hook plugin example ( may be turned into class + decorator later )
 const preHandlerHook = (fastify, options, done) => {
   fastify.addHook("preHandler", (request, reply, done) => {
     console.log("Pre handler hook !");
@@ -51,9 +64,9 @@ const config = {
   // Define the routes
   routes: [
     {
-      name: "users", // This is the name of the handler in serverless.yml
-      controller: UserController, // the actual controller for this route
-      prefix: "v1/users" // The prefix defined for api gateway
+      name: "helloworld", // This is the name of the handler in serverless.yml
+      controller: HelloWorldController, // the actual controller for this route
+      prefix: "v1/helloworld" // The prefix defined for api gateway
     }
   ],
   // Registering the fastify plugins ( the order matters )
@@ -62,7 +75,7 @@ const config = {
 
 // Run the app ( local dev ) or register the handlers for serverless
 bootstrapApp(config, async () => {
-  // Any async actions before launching app
+  // Any async code before launching app
   // e.g initDatabaseConnection()
 });
 
@@ -85,11 +98,15 @@ provider:
     IS_SERVERLESS: true
 
 functions:
-  users:
-    handler: src/app.users
+  helloworld:
+    handler: app.helloworld
     events:
-      - http: "ANY /v1/users"
-      - http: "ANY /v1/users/{proxy+}"
+      - http: "ANY /v1/helloworld"
+      - http: "ANY /v1/helloworld/{proxy+}"
+
+
+plugins:
+  - serverless-webpack
 ```
 
 ## License

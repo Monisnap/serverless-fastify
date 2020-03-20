@@ -12,8 +12,12 @@ provider:
     IS_SERVERLESS: true
 
 functions:
-  users:
-    handler: src/app.users
+  helloworld:
+    handler: app.helloworld
     events:
-      - http: "ANY /v1/users"
-      - http: "ANY /v1/users/{proxy+}"
+      - http: "ANY /v1/helloworld"
+      - http: "ANY /v1/helloworld/{proxy+}"
+
+
+plugins:
+  - serverless-webpack

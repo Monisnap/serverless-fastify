@@ -1,19 +1,29 @@
-import { SlsFastifyConfig, SlsFastifyController } from "../src/interfaces";
-import { bootstrapApp } from "../src/app/bootstrap-app";
-import { FastifyInstance, FastifyReply } from "fastify";
+import { SlsFastifyConfig } from "../src/interfaces";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { bootstrapApp, Get } from "../src";
 
 // Define the controller using the interface
-class UserController implements SlsFastifyController {
-  endpoints(fastify: FastifyInstance, opts, done) {
-    fastify.get("/", async (request, reply: FastifyReply<any>) => {
-      reply.send("Hello world");
-    });
-
-    done();
+class HelloWorldController {
+  @Get("/", {
+    schema: {
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            msg: { type: "string" }
+          }
+        }
+      }
+    }
+  })
+  getMessage(request: FastifyRequest, reply: FastifyReply<any>) {
+    return {
+      msg: "Hello world"
+    };
   }
 }
 
-// Pre handler hook plugin example
+// Pre handler hook plugin example ( may be turned into class + decorator later )
 const preHandlerHook = (fastify, options, done) => {
   fastify.addHook("preHandler", (request, reply, done) => {
     console.log("Pre handler hook !");
@@ -32,9 +42,9 @@ const config = {
   // Define the routes
   routes: [
     {
-      name: "users", // This is the name of the handler in serverless.yml
-      controller: UserController, // the actual controller for this route
-      prefix: "v1/users" // The prefix defined for api gateway
+      name: "helloworld", // This is the name of the handler in serverless.yml
+      controller: HelloWorldController, // the actual controller for this route
+      prefix: "v1/helloworld" // The prefix defined for api gateway
     }
   ],
   // Registering the fastify plugins ( the order matters )
@@ -43,6 +53,6 @@ const config = {
 
 // Run the app ( local dev ) or register the handlers for serverless
 bootstrapApp(config, async () => {
-  // Any async actions before launching app
+  // Any async code before launching app
   // e.g initDatabaseConnection()
 });
