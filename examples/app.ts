@@ -1,5 +1,5 @@
 import { SlsFastifyConfig } from "../src/interfaces";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { bootstrapApp, Get } from "../src";
 
 // Define the controller using the interface
