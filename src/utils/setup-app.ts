@@ -31,8 +31,9 @@ const registerController = (app: fastify.FastifyInstance, api: RouteDefinition) 
           fastify[decoratorData.method](
             decoratorData.path,
             decoratorData.config ?? {},
-            (request: fastify.FastifyRequest, reply: fastify.FastifyReply<any>) => {
-              reply.send(controller[method](request, reply))
+            async (request: fastify.FastifyRequest, reply: fastify.FastifyReply<any>) => {
+              const result = await controller[method](request, reply)
+              reply.send(result);
             }
           );
         }

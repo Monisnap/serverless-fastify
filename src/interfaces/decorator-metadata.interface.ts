@@ -1,7 +1,7 @@
-import { RouteSchema } from "fastify";
+import { RouteShorthandOptions } from "fastify";
 
 export interface DecoratorMetadata {
   method: string;
   path: string;
-  config: RouteSchema;
+  config?: RouteShorthandOptions;
 }
