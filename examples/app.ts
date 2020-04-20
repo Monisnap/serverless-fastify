@@ -47,7 +47,7 @@ const config = {
 } as SlsFastifyConfig;
 
 // Export the app ( to run it manually ) or register the handlers for serverless
-export const { app, handlers } = bootstrapApp(config, async () => {
+export const { app, ...handlers } = bootstrapApp(config, async () => {
   // Any async code before execution the handlers ( in serverless )
   // e.g initDatabaseConnection()
 });
