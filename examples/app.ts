@@ -46,8 +46,13 @@ const config = {
   plugins: [preHandlerHook],
 } as SlsFastifyConfig;
 
-// Export the app ( to run it manually ) or register the handlers for serverless
-export const { app, handlers } = bootstrapApp(config, async () => {
+const bootstrap = bootstrapApp(config, async () => {
   // Any async code before execution the handlers ( in serverless )
   // e.g initDatabaseConnection()
 });
+
+// Export the app ( to run it manually ) or register the handlers for serverless
+export = {
+  app: bootstrap.app,
+  ...bootstrap.handlers,
+};

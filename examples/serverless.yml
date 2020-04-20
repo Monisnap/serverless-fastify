@@ -11,7 +11,7 @@ provider:
 
 functions:
   helloworld:
-    handler: app.handlers.helloworld
+    handler: app.helloworld
     events:
       - http: "ANY /v1/helloworld"
       - http: "ANY /v1/helloworld/{proxy+}"

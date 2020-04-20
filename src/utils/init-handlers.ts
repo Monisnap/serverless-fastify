@@ -1,8 +1,6 @@
 import * as awsLambdaFastify from "aws-lambda-fastify";
 import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
-import * as fp from "fastify-plugin";
 import fastify = require("fastify");
-import { getFromContainer } from "..";
 import { initApp, registerController } from "./setup-app";
 import { Handlers } from "../interfaces/handlers.interface";
 

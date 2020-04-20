@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { initHandlers } from "../utils/init-handlers";
 import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
-import fastify = require("fastify");
 import { initApp, registerController } from "../utils/setup-app";
 
 export const bootstrapApp = (config: SlsFastifyConfig, beforeStart?: () => Promise<void>) => {

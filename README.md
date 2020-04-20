@@ -68,30 +68,35 @@ const config = {
   plugins: [preHandlerHook],
 } as SlsFastifyConfig;
 
-// Export the app ( to run it manually ) or register the handlers for serverless
-export const { app, handlers } = bootstrapApp(config, async () => {
+const bootstrap = bootstrapApp(config, async () => {
   // Any async code before execution the handlers ( in serverless )
   // e.g initDatabaseConnection()
 });
+
+// Export the app ( to run it manually ) or register the handlers for serverless
+export = {
+  app: bootstrap.app,
+  ...bootstrap.handlers,
+};
 
 ```
 
 server.ts
 ```ts
-import { app } from "./app";
+import bootstrap = require("./app");
 
 async function start() {
   const PORT = Number(process.env.port) || 3000;
   const HOST = process.env.host || "127.0.0.1";
-  app.listen(PORT, HOST, async (err) => {
+  bootstrap.app.listen(PORT, HOST, async (err) => {
     if (err) console.error(err);
     console.log(`server listening on port ${PORT}`);
   });
 }
 
 start();
-```
 
+```
 
 serverless.yml
 
@@ -109,7 +114,7 @@ provider:
 
 functions:
   helloworld:
-    handler: app.handlers.helloworld
+    handler: app.helloworld
     events:
       - http: "ANY /v1/helloworld"
       - http: "ANY /v1/helloworld/{proxy+}"
