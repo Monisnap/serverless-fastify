@@ -4,10 +4,7 @@ import * as fp from "fastify-plugin";
 import fastify = require("fastify");
 import { getFromContainer } from "..";
 import { initApp, registerController } from "./setup-app";
-
-interface Handlers {
-  [key: string]: (event: any, context: any) => Promise<any>;
-}
+import { Handlers } from "../interfaces/handlers.interface";
 
 const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void>) | undefined): Handlers => {
   const handlers: Handlers = {};
