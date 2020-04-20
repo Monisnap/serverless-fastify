@@ -10,15 +10,15 @@ class HelloWorldController {
         200: {
           type: "object",
           properties: {
-            msg: { type: "string" }
-          }
-        }
-      }
-    }
+            msg: { type: "string" },
+          },
+        },
+      },
+    },
   })
   getMessage(request: FastifyRequest, reply: FastifyReply<any>) {
     return {
-      msg: "Hello world"
+      msg: "Hello world",
     };
   }
 }
@@ -34,25 +34,20 @@ const preHandlerHook = (fastify, options, done) => {
 
 // Define the config here
 const config = {
-  host: "localhost",
-  port: 3000,
-  // Env variable which define if it's running in serverless env
-  // Just set it to true in the serveless.yml file
-  isServerless: process.env.IS_SERVERLESS || false,
   // Define the routes
   routes: [
     {
       name: "helloworld", // This is the name of the handler in serverless.yml
       controller: HelloWorldController, // the actual controller for this route
-      prefix: "v1/helloworld" // The prefix defined for api gateway
-    }
+      prefix: "v1/helloworld", // The prefix defined for api gateway
+    },
   ],
   // Registering the fastify plugins ( the order matters )
-  plugins: [preHandlerHook]
+  plugins: [preHandlerHook],
 } as SlsFastifyConfig;
 
-// Run the app ( local dev ) or register the handlers for serverless
-bootstrapApp(config, async () => {
-  // Any async code before launching app
+// Export the app ( to run it manually ) or register the handlers for serverless
+export const { app, handlers } = bootstrapApp(config, async () => {
+  // Any async code before execution the handlers ( in serverless )
   // e.g initDatabaseConnection()
 });

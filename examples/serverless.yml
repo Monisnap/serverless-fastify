@@ -8,8 +8,6 @@ provider:
   stackName: ${self:service}-${self:provider.stage}
   apiName: ${self:service}-${self:provider.stage}
   timeout: 29
-  environment:
-    IS_SERVERLESS: true
 
 functions:
   helloworld:
