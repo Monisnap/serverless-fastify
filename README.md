@@ -106,12 +106,10 @@ provider:
   stackName: ${self:service}-${self:provider.stage}
   apiName: ${self:service}-${self:provider.stage}
   timeout: 29
-  environment:
-    IS_SERVERLESS: true
 
 functions:
   helloworld:
-    handler: app.helloworld
+    handler: app.handlers.helloworld
     events:
       - http: "ANY /v1/helloworld"
       - http: "ANY /v1/helloworld/{proxy+}"

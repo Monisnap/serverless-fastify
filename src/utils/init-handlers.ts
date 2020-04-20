@@ -5,8 +5,12 @@ import fastify = require("fastify");
 import { getFromContainer } from "..";
 import { initApp, registerController } from "./setup-app";
 
-const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void>) | undefined) => {
-  const handlers: ((event: any, context: any) => Promise<any>)[] = [];
+interface Handlers {
+  [key: string]: (event: any, context: any) => Promise<any>;
+}
+
+const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void>) | undefined): Handlers => {
+  const handlers: Handlers = {};
   for (let api of config.routes) {
     handlers[api.name] = async (event, context) => {
       if (beforeStart) {
