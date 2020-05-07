@@ -18,14 +18,13 @@ npm i serverless-fastify --save
 
 ## Example
 
-app.ts
-
+hello-world-controller.ts
 ```ts
-import { bootstrapApp, SlsFastifyConfig, Get } from "serverless-fastify";
-import { FastifyInstance, FastifyReply } from "fastify";
+import { Get } from "serverless-fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 
 // Define the controller using the interface
-class HelloWorldController {
+export class HelloWorldController {
   @Get("/", {
     schema: {
       response: {
@@ -45,6 +44,13 @@ class HelloWorldController {
   }
 }
 
+```
+
+sls-fastify-config.ts
+```ts
+import { SlsFastifyConfig } from "serverless-fastify";
+import { HelloWorldController } from "./hello-world.controller";
+
 // Pre handler hook plugin example ( may be turned into class + decorator later )
 const preHandlerHook = (fastify, options, done) => {
   fastify.addHook("preHandler", (request, reply, done) => {
@@ -55,7 +61,7 @@ const preHandlerHook = (fastify, options, done) => {
 };
 
 // Define the config here
-const config = {
+const slsFastifyConfig = {
   // Define the routes
   routes: [
     {
@@ -68,27 +74,37 @@ const config = {
   plugins: [preHandlerHook],
 } as SlsFastifyConfig;
 
-const bootstrap = bootstrapApp(config, async () => {
-  // Any async code before execution the handlers ( in serverless )
-  // e.g initDatabaseConnection()
-});
+export { slsFastifyConfig };
 
-// Export the app ( to run it manually ) or register the handlers for serverless
+```
+
+handlers.ts
+```ts
+import { initHandlers } from "serverless-fastify";
+import { slsFastifyConfig } from "./sls-fastify-config"; // Your config
+
+// Register the handlers for serverless
 export = {
-  app: bootstrap.app,
-  ...bootstrap.handlers,
+  ...initHandlers(slsFastifyConfig, async () => {
+    // Any async code before execution the handlers ( in serverless )
+    // e.g initDatabaseConnection()
+  }),
 };
 
 ```
 
-server.ts
+server.ts ( To run the server locally )
 ```ts
-import bootstrap = require("./app");
+import { initApp } from "serverless-fastify";
+import { slsFastifyConfig } from "./sls-fastify-config"; // Your config
 
 async function start() {
   const PORT = Number(process.env.port) || 3000;
   const HOST = process.env.host || "127.0.0.1";
-  bootstrap.app.listen(PORT, HOST, async (err) => {
+
+  const app = initApp(slsFastifyConfig);
+
+  app.listen(PORT, HOST, async (err) => {
     if (err) console.error(err);
     console.log(`server listening on port ${PORT}`);
   });
@@ -114,7 +130,7 @@ provider:
 
 functions:
   helloworld:
-    handler: app.helloworld
+    handler: handlers.helloworld
     events:
       - http: "ANY /v1/helloworld"
       - http: "ANY /v1/helloworld/{proxy+}"

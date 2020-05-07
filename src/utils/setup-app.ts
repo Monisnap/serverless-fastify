@@ -1,20 +1,7 @@
 import fastify = require("fastify");
-import { SlsFastifyConfig, SlsFastifyController, RouteDefinition } from "../interfaces";
-import * as fp from "fastify-plugin";
+import { RouteDefinition } from "../interfaces";
 import { getFromContainer, methodMetadataKey } from "..";
 import { DecoratorMetadata } from "../interfaces/decorator-metadata.interface";
-
-const initApp = (config: SlsFastifyConfig) => {
-  //Create instance here
-  let app: fastify.FastifyInstance = fastify({});
-
-  // Register the plugins ( pre handler, global error, etc..)
-  for (let plugin of config.plugins) {
-    app.register(fp(plugin));
-  }
-
-  return app;
-};
 
 const registerController = (app: fastify.FastifyInstance, api: RouteDefinition) => {
   // Register the controller
@@ -32,7 +19,7 @@ const registerController = (app: fastify.FastifyInstance, api: RouteDefinition) 
             decoratorData.path,
             decoratorData.config ?? {},
             async (request: fastify.FastifyRequest, reply: fastify.FastifyReply<any>) => {
-              const result = await controller[method](request, reply)
+              const result = await controller[method](request, reply);
               reply.send(result);
             }
           );
@@ -44,4 +31,4 @@ const registerController = (app: fastify.FastifyInstance, api: RouteDefinition) 
   );
 };
 
-export { initApp, registerController };
+export { registerController };

@@ -1,7 +1,8 @@
 import * as awsLambdaFastify from "aws-lambda-fastify";
 import { SlsFastifyConfig, SlsFastifyController } from "../interfaces";
 import fastify = require("fastify");
-import { initApp, registerController } from "./setup-app";
+import * as fp from "fastify-plugin";
+import { registerController } from "./setup-app";
 import { Handlers } from "../interfaces/handlers.interface";
 
 const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void>) | undefined): Handlers => {
@@ -12,8 +13,13 @@ const initHandlers = (config: SlsFastifyConfig, beforeStart: (() => Promise<void
         await beforeStart();
       }
 
-      // init the base app for each handler
-      let app = initApp(config);
+      //Create instance here
+      let app: fastify.FastifyInstance = fastify({});
+
+      // Register the plugins ( pre handler, global error, etc..)
+      for (let plugin of config.plugins) {
+        app.register(fp(plugin));
+      }
       // Register the controller
       registerController(app, api);
 
