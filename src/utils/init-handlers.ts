@@ -5,7 +5,7 @@ import * as fp from "fastify-plugin";
 import { registerController } from "./setup-app";
 import { Handlers } from "../interfaces/handlers.interface";
 
-const initHandlers = (config: SlsFastifyConfig, beforeHandlingRequest: ((event?, context?) => Promise<void>) | undefined): Handlers => {
+const initHandlers = (config: SlsFastifyConfig, beforeHandlingRequest: ((event?, context?) => Promise<void | string>) | undefined): Handlers => {
   const handlers: Handlers = {};
   for (let api of config.routes) {
     handlers[api.name] = async (event, context) => {
